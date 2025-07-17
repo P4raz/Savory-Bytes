@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>Menu | Savory Bites</title>
+    <link rel="icon" type="image/ico" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <style>
+        /* Color Scheme - Consistent with Homepage */
+        :root {
+            --primary: #e63946;
+            --secondary: #f1faee;
+            --accent: #a8dadc;
+            --dark: #1d3557;
+            --light: #457b9d;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Playfair Display', serif;
+        }
+
+        body {
+            background-color: var(--secondary);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .container-2 {
+            max-width: 1200px;
+            margin: 100px auto 0;
+            padding: 0 20px;
+        }
+
+        /* Header & Navigation - Consistent with Homepage */
+        header {
+            background-color: var(--dark);
+            color: var(--secondary);
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 5px 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        /* Mobile Menu Toggle */
+        .hamburger {
+            display: none;
+            width: 30px;
+            height: 20px;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            z-index: 101;
+        }
+
+        .hamburger span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background: var(--secondary);
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Menu Page Specific Styles */
+        .menu-hero {
+            height: 50vh;
+            min-height: 400px;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding-top: 80px;
+        }
+
+        .menu-hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.2;
+        }
+
+        .menu-container {
+            padding: 60px 0;
+        }
+
+        .menu-section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: var(--dark);
+            position: relative;
+            text-align: center;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .menu-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .menu-item {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .item-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 20px;
+            border: 3px solid var(--accent);
+            transition: transform 0.3s;
+        }
+
+        .menu-item:hover .item-image {
+            transform: scale(1.05);
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed var(--light);
+            padding-bottom: 5px;
+        }
+
+        .item-name {
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+
+        .item-price {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .item-desc {
+            color: var(--light);
+            font-size: 0.95rem;
+        }
+
+        .dietary-icons {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .dietary-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--dark);
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .dietary-icon:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Menu Categories Navigation */
+        .menu-categories {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .category-btn {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Footer - Consistent with Homepage */
+        footer {
+            background: var(--dark);
+            color: var(--secondary);
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .social-links {
+            margin: 20px 0;
+        }
+
+        .social-links a {
+            color: var(--secondary);
+            margin: 0 15px;
+            font-size: 1.5rem;
+            transition: color 0.3s, transform 0.3s;
+            display: inline-block;
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        /* Touch Target Sizes */
+        a, button {
+            min-width: 44px;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .container, .container-2 {
+                padding: 0 15px;
+            }
+            
+            .menu-hero-content h1 {
+                font-size: 3rem;
+            }
+            
+            .menu-items {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 992px) {
+            .menu-hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .logo {
+                font-size: 24px;
+            }
+            
+            .menu-categories {
+                gap: 10px;
+            }
+            
+            .category-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Mobile Navigation */
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                background: var(--dark);
+                width: 80%;
+                height: calc(100vh - 80px);
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                padding-top: 30px;
+                transition: left 0.3s ease;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            }
+            
+            .nav-links.active {
+                left: 0;
+            }
+            
+            .nav-links li {
+                margin: 15px 0;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+            
+            /* Menu Hero */
+            .menu-hero {
+                height: 40vh;
+                min-height: 350px;
+            }
+            
+            .menu-hero-content h1 {
+                font-size: 2.2rem;
+            }
+            
+            /* Menu Items */
+            .menu-items {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+            
+            .menu-item {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 20px;
+            }
+            
+            .item-image {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .item-header {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .item-price {
+                margin-top: 5px;
+            }
+            
+            /* Categories */
+            .menu-categories {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 10px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            
+            .menu-categories::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .category-btn {
+                flex-shrink: 0;
+            }
+            
+            .container-2 {
+                margin-top: 80px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .menu-hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .item-name {
+                font-size: 1.2rem;
+            }
+            
+            .item-price {
+                font-size: 1.1rem;
+            }
+            
+            .item-image {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .menu-hero {
+                min-height: 300px;
+            }
+            
+            footer .logo {
+                font-size: 22px;
+            }
+            
+            .social-links a {
+                font-size: 1.3rem;
+                margin: 0 10px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .menu-hero-content h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.6rem;
+            }
+            
+            .container, .container-2 {
+                padding: 0 12px;
+            }
+            
+            .menu-item {
+                padding: 15px;
+            }
+            
+            .category-btn {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Savory Bites</div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="Savory bites - Menu.html" class="active">Menu</a></li>
+                    <li><a href="Savory bites - About.html">About</a></li>
+                    <li><a href="Savory bites - Gallery.html">Gallery</a></li>
+                    <li><a href="Savory bites - Contact.html">Contact</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Menu Hero Section -->
+    <section class="menu-hero">
+        <div class="container menu-hero-content">
+            <h1>Our Menu</h1>
+        </div>
+    </section>
+
+    <!-- Menu Categories Navigation -->
+    <div class="container-2">
+        <div class="menu-categories">
+            <button class="category-btn active" data-category="all">All</button>
+            <button class="category-btn" data-category="starters">Starters</button>
+            <button class="category-btn" data-category="mains">Main Courses</button>
+            <button class="category-btn" data-category="desserts">Desserts</button>
+            <button class="category-btn" data-category="drinks">Drinks</button>
+        </div>
+    </div>
+
+    <!-- Menu Container -->
+    <div class="menu-container">
+        <div class="container">
+            <!-- Starters Section -->
+            <section class="menu-section" id="starters">
+                <h2 class="section-title">Starters</h2>
+                <div class="menu-items">
+                    <div class="menu-item" data-category="starters">
+                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Bruschetta" class="item-image">
+                        <div class="item-info">
+                            <div class="item-header">
+                                <h3 class="item-name">Bruschetta</h3>
+                                <span class="item-price">$9.99</span>
+                            </div>
+                            <p class="item-desc">Toasted bread topped with tomatoes, garlic, and fresh basil</p>
+                            <div class="dietary-icons">
+                                <span class="dietary-icon" title="Vegetarian">V</span>
+                                <span class="dietary-icon" title="Gluten Free Option">GF</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item" data-category="starters">
+                        <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Calamari" class="item-image">
+                        <div class="item-info">
+                            <div class="item-header">
+                                <h3 class="item-name">Calamari</h3>
+                                <span class="item-price">$12.99</span>
+                            </div>
+                            <p class="item-desc">Crispy fried squid served with lemon aioli and marinara sauce</p>
+                            <div class="dietary-icons">
+                                <span class="dietary-icon" title="Contains Seafood">SF</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item" data-category="starters">
+                        <img src="https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Caprese Salad" class="item-image">
+                        <div class="item-info">
+                            <div class="item-header">
+                                <h3 class="item-name">Caprese Salad</h3>
+                                <span class="item-price">$10.99</span>
+                            </div>
+                            <p class="item-desc">Fresh mozzarella, tomatoes, and basil drizzled with balsamic glaze</p>
+                            <div class="dietary-icons">
+                                <span class="dietary-icon" title="Vegetarian">V</span>
+                                <span class="dietary-icon" title="Gluten Free">GF</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Main Courses Section -->
+            <section class="menu-section" id="mains">
+                <h2 class="section-title">Main Courses</h2>
+                <div class="menu-items">
+                    <div class="menu-item" data-category="mains">
+                        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Grilled Salmon" class="item-image">
+                        <div class="item-info">
+                            <div class="item-header">
+                                <h3 class="item-name">Grilled Salmon</h3>
+                                <span class="item-price">$24.99</span>
+                            </div>
+                            <p class="item-desc">Fresh Atlantic salmon with lemon butter sauce and seasonal vegetables</p>
+                            <div class="dietary-icons">
+                                <span class="dietary-icon" title="Contains Fish">F</span>
+                                <span class="dietary-icon" title="Gluten Free">GF</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item" data-category="mains">
+                        <img src="https://images.unsplash.com/photo-1559847844-5315695dadae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Beef Tenderloin" class="item-image">
+                        <div class="item-info">
+                            <div class="item-header">
+                                <h3 class="item-name">Beef Tenderloin</h3>
+                                <span class="item-price">$32.99</span>
+                            </div>
+                            <p class="item-desc">Premium cut with red wine reduction and truffle mashed potatoes</p>
+                            <div class="dietary-icons">
+                                <span class="dietary-icon" title="Contains Dairy">D</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item" data-category="mains">
+                        <img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Vegetable Risotto" class="item-image">
+                        <div class="item-info">
+                            <div class="item-header">
+                                <h3 class="item-name">Vegetable Risotto</h3>
+                                <span class="item-price">$18.99</span>
+                            </div>
+                            <p class="item-desc">Creamy arborio rice with seasonal vegetables and parmesan</p>
+                            <div class="dietary-icons">
+                                <span class="dietary-icon" title="Vegetarian">V</span>
+                                <span class="dietary-icon" title="Contains Dairy">D</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item" data-category="mains">
+                        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Chicken Parmesan" class="item-image">
+                        <div class="item-info">
+                            <div class="item-header">
+                                <h3 class="item-name">Chicken Parmesan</h3>
+                                <span class="item-price">$21.99</span>
+                            </div>
+                            <p class="item-desc">Breaded chicken topped with marinara and mozzarella, served with pasta</p>
+                            <div class="dietary-icons">
+                                <span class="dietary-icon" title="Contains Dairy">D</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Desserts Section -->
+            <section class="menu-section" id="desserts">
+                <h2 class="section-title">Desserts</h2>
+                <div class="menu-items">
+                    <div class="menu-item" data-category="desserts">
+                        <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Tiramisu" class="item-image">
+                        <div class="item-info">
+                            <div class="item-header">
+                                <h3 class="item-name">Tiramisu</h3>
+                                <span class="item-price">$8.99</span>
+                            </div>
+                            <p class="item-desc">Classic Italian dessert with layers of coffee-soaked ladyfingers and mascarpone</p>
+                            <div class="dietary-icons">
+                                <span class="dietary-icon" title="Contains Dairy">D</span>
+                                <span class="dietary-icon" title="Contains Alcohol">A</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item" data-category="desserts">
+                        <img src="https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Chocolate Lava Cake" class="item-image">
+                        <div class="item-info">
+                            <div class="item-header">
+                                <h3 class="item-name">Chocolate Lava Cake</h3>
+                                <span class="item-price">$9.99</span>
+                            </div>
+                            <p class="item-desc">Warm chocolate cake with a molten center, served with vanilla ice cream</p>
+                            <div class="dietary-icons">
+                                <span class="dietary-icon" title="Contains Dairy">D</span>
+                                <span class="dietary-icon" title="Gluten Free Option">GF</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Drinks Section -->
+            <section class="menu-section" id="drinks">
+                <h2 class="section-title">Drinks</h2>
+                <div class="menu-items">
+                    <div class="menu-item" data-category="drinks">
+                        <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Signature Cocktails" class="item-image">
+                        <div class="item-info">
+                            <div class="item-header">
+                                <h3 class="item-name">Signature Cocktails</h3>
+                                <span class="item-price">$12.99</span>
+                            </div>
+                            <p class="item-desc">Ask your server about our seasonal craft cocktails</p>
+                            <div class="dietary-icons">
+                                <span class="dietary-icon" title="Contains Alcohol">A</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item" data-category="drinks">
+                        <img src="https://images.unsplash.com/photo-1551029506-0807df4e2031?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Wine Selection" class="item-image">
+                        <div class="item-info">
+                            <div class="item-header">
+                                <h3 class="item-name">Wine Selection</h3>
+                                <span class="item-price">$8.99+</span>
+                            </div>
+                            <p class="item-desc">Extensive selection of red, white, and sparkling wines</p>
+                            <div class="dietary-icons">
+                                <span class="dietary-icon" title="Contains Alcohol">A</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item" data-category="drinks">
+                        <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Non-Alcoholic Beverages" class="item-image">
+                        <div class="item-info">
+                            <div class="item-header">
+                                <h3 class="item-name">Non-Alcoholic Beverages</h3>
+                                <span class="item-price">$3.99+</span>
+                            </div>
+                            <p class="item-desc">Fresh juices, sodas, and specialty mocktails</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="logo">Savory Bites</div>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="Yelp"><i class="fab fa-yelp"></i></a>
+            </div>
+            <p>&copy; <span id="year"></span> Savory Bites Restaurant. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Current year for copyright
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Mobile Menu Toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Menu Category Filter
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const menuItems = document.querySelectorAll('.menu-item');
+
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const category = btn.dataset.category;
+                
+                // Filter items
+                menuItems.forEach(item => {
+                    if (category === 'all' || item.dataset.category === category) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                // Scroll to section if not "all"
+                if (category !== 'all') {
+                    document.getElementById(category).scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Responsive adjustment for menu items
+        function adjustMenuLayout() {
+            if (window.innerWidth <= 768) {
+                menuItems.forEach(item => {
+                    item.style.flexDirection = 'column';
+                    item.style.alignItems = 'center';
+                    item.style.textAlign = 'center';
+                });
+            } else {
+                menuItems.forEach(item => {
+                    item.style.flexDirection = 'row';
+                    item.style.alignItems = 'flex-start';
+                    item.style.textAlign = 'left';
+                });
+            }
+        }
+
+        // Initialize menu layout
+        window.addEventListener('resize', adjustMenuLayout);
+        adjustMenuLayout();
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

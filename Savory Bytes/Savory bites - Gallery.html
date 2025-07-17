@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>Gallery | Savory Bites</title>
+    <link rel="icon" type="image/ico" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <style>
+        /* Color Scheme - Consistent with Homepage */
+        :root {
+            --primary: #e63946;
+            --secondary: #f1faee;
+            --accent: #a8dadc;
+            --dark: #1d3557;
+            --light: #457b9d;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Playfair Display', serif;
+        }
+
+        body {
+            background-color: var(--secondary);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header & Navigation - Consistent with Homepage */
+        header {
+            background-color: var(--dark);
+            color: var(--secondary);
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 5px 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        /* Mobile Menu Toggle */
+        .hamburger {
+            display: none;
+            width: 30px;
+            height: 20px;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            z-index: 101;
+        }
+
+        .hamburger span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background: var(--secondary);
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Gallery Page Specific Styles */
+        .gallery-hero {
+            height: 50vh;
+            min-height: 400px;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding-top: 80px;
+        }
+
+        .gallery-hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.2;
+        }
+
+        .gallery-hero-content p {
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        /* Gallery Section */
+        .gallery {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: var(--dark);
+            position: relative;
+            text-align: center;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .gallery-filter {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .gallery-filter::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-btn {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            flex-shrink: 0;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease-out;
+            aspect-ratio: 1/1;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease-out;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+        }
+
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+
+        .gallery-caption h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .gallery-caption p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Lightbox Modal */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            text-align: center;
+        }
+
+        .lightbox-content img {
+            width: auto;
+            height: auto;
+            max-width: 90%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 5px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.5);
+        }
+
+        .lightbox-caption {
+            color: white;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            max-width: 800px;
+        }
+
+        .lightbox-caption h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            color: var(--accent);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            color: var(--primary);
+            transform: rotate(90deg);
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(0,0,0,0.5);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .prev-btn {
+            left: 30px;
+        }
+
+        .next-btn {
+            right: 30px;
+        }
+
+        .nav-btn:hover {
+            color: var(--primary);
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Footer - Consistent with Homepage */
+        footer {
+            background: var(--dark);
+            color: var(--secondary);
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .social-links {
+            margin: 20px 0;
+        }
+
+        .social-links a {
+            color: var(--secondary);
+            margin: 0 15px;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+            transform: translateY(-3px) scale(1.1);
+        }
+
+        /* Touch Target Sizes */
+        a, button {
+            min-width: 44px;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .gallery-hero-content h1 {
+                font-size: 3rem;
+            }
+            
+            .gallery-grid {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .gallery-hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .logo {
+                font-size: 24px;
+            }
+            
+            .filter-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .gallery-caption h3 {
+                font-size: 1.1rem;
+            }
+            
+            .gallery-caption p {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Mobile Navigation */
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                background: var(--dark);
+                width: 80%;
+                height: calc(100vh - 80px);
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                padding-top: 30px;
+                transition: left 0.3s ease;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            }
+            
+            .nav-links.active {
+                left: 0;
+            }
+            
+            .nav-links li {
+                margin: 15px 0;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+            
+            /* Gallery Hero */
+            .gallery-hero {
+                height: 40vh;
+                min-height: 350px;
+            }
+            
+            .gallery-hero-content h1 {
+                font-size: 2.2rem;
+            }
+            
+            .gallery-hero-content p {
+                font-size: 1rem;
+            }
+            
+            /* Gallery Grid */
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .gallery {
+                padding: 60px 0;
+            }
+            
+            .section-title {
+                margin-bottom: 30px;
+            }
+            
+            /* Lightbox */
+            .lightbox-content {
+                max-width: 95%;
+            }
+            
+            .close-btn {
+                top: 15px;
+                right: 15px;
+                font-size: 2rem;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .nav-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .lightbox-caption {
+                font-size: 1rem;
+                padding: 0 15px;
+            }
+            
+            .lightbox-caption h3 {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .gallery-hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .gallery-hero {
+                min-height: 300px;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .filter-btn {
+                padding: 8px 16px;
+                min-width: 80px;
+            }
+            
+            footer .logo {
+                font-size: 22px;
+            }
+            
+            .social-links a {
+                font-size: 1.3rem;
+                margin: 0 10px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .gallery-hero-content h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.6rem;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+            
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            
+            .close-btn {
+                top: 10px;
+                right: 10px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Savory Bites</div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="Savory bites - Menu.html">Menu</a></li>
+                    <li><a href="Savory bites - About.html">About</a></li>
+                    <li><a href="Savory bites - Gallery.html" class="active">Gallery</a></li>
+                    <li><a href="Savory bites - Contact.html">Contact</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Gallery Hero Section -->
+    <section class="gallery-hero">
+        <div class="container gallery-hero-content">
+            <h1>Our Gallery</h1>
+            <p>Experience the Savory Bites journey through our photos</p>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery">
+        <div class="container">
+            <h2 class="section-title">Visual Delights</h2>
+            
+            <div class="gallery-filter">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="food">Food</button>
+                <button class="filter-btn" data-filter="interior">Interior</button>
+                <button class="filter-btn" data-filter="events">Events</button>
+                <button class="filter-btn" data-filter="team">Our Team</button>
+            </div>
+            
+            <div class="gallery-grid">
+                <!-- Food Images -->
+                <div class="gallery-item" data-category="food">
+                    <img src="https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Grilled Salmon">
+                    <div class="gallery-caption">
+                        <h3>Grilled Salmon</h3>
+                        <p>Our signature dish with seasonal vegetables</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-category="food">
+                    <img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Vegetable Risotto">
+                    <div class="gallery-caption">
+                        <h3>Vegetable Risotto</h3>
+                        <p>Creamy arborio rice with seasonal vegetables</p>
+                    </div>
+                </div>
+                
+                <!-- Interior Images -->
+                <div class="gallery-item" data-category="interior">
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Restaurant Interior">
+                    <div class="gallery-caption">
+                        <h3>Main Dining Area</h3>
+                        <p>Elegant ambiance for your dining experience</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-category="interior">
+                    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Bar Area">
+                    <div class="gallery-caption">
+                        <h3>Bar Area</h3>
+                        <p>Enjoy our craft cocktails and fine wines</p>
+                    </div>
+                </div>
+                
+                <!-- Events Images -->
+                <div class="gallery-item" data-category="events">
+                    <img src="https://images.unsplash.com/photo-1547592180-85f173990554?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Wine Tasting Event">
+                    <div class="gallery-caption">
+                        <h3>Wine Tasting Night</h3>
+                        <p>Monthly event featuring local vineyards</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-category="events">
+                    <img src="https://images.unsplash.com/photo-1555244162-803834f70033?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Private Party">
+                    <div class="gallery-caption">
+                        <h3>Private Celebration</h3>
+                        <p>Perfect setting for your special occasions</p>
+                    </div>
+                </div>
+                
+                <!-- Team Images -->
+                <div class="gallery-item" data-category="team">
+                    <img src="private-chef.jpg" alt="Chef Alejandro">
+                    <div class="gallery-caption">
+                        <h3>Chef Alejandro</h3>
+                        <p>Our executive chef at work</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-category="team">
+                    <img src="https://images.unsplash.com/photo-1581349485608-9469926a8e5e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Kitchen Team">
+                    <div class="gallery-caption">
+                        <h3>Kitchen Team</h3>
+                        <p>Passionate professionals creating culinary magic</p>
+                    </div>
+                </div>
+                
+                <!-- More Food Images -->
+                <div class="gallery-item" data-category="food">
+                    <img src="https://images.unsplash.com/photo-1559847844-5315695dadae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Beef Tenderloin">
+                    <div class="gallery-caption">
+                        <h3>Beef Tenderloin</h3>
+                        <p>Premium cut with red wine reduction</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-category="food">
+                    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Dessert Platter">
+                    <div class="gallery-caption">
+                        <h3>Dessert Platter</h3>
+                        <p>Sweet endings to your meal</p>
+                    </div>
+                </div>
+                
+                <!-- More Interior Images -->
+                <div class="gallery-item" data-category="interior">
+                    <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Outdoor Seating">
+                    <div class="gallery-caption">
+                        <h3>Outdoor Patio</h3>
+                        <p>Al fresco dining in our garden</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-category="interior">
+                    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Private Dining">
+                    <div class="gallery-caption">
+                        <h3>Private Dining Room</h3>
+                        <p>Exclusive space for special gatherings</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <span class="close-btn" id="close-btn">&times;</span>
+        <span class="nav-btn prev-btn" id="prev-btn"><i class="fas fa-chevron-left"></i></span>
+        <span class="nav-btn next-btn" id="next-btn"><i class="fas fa-chevron-right"></i></span>
+        <div class="lightbox-content">
+            <img id="lightbox-img" src="" alt="">
+            <div class="lightbox-caption" id="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="logo">Savory Bites</div>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="Yelp"><i class="fab fa-yelp"></i></a>
+            </div>
+            <p>&copy; <span id="year"></span> Savory Bites Restaurant. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Current year for copyright
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Mobile Menu Toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Gallery Filter Functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const filter = btn.dataset.filter;
+                
+                // Filter items
+                galleryItems.forEach(item => {
+                    if (filter === 'all' || item.dataset.category === filter) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Lightbox Functionality
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxCaption = document.getElementById('lightbox-caption');
+        const closeBtn = document.getElementById('close-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        
+        let currentImageIndex = 0;
+        const images = Array.from(document.querySelectorAll('.gallery-item img'));
+        const captions = Array.from(document.querySelectorAll('.gallery-caption'));
+        
+        // Open lightbox with clicked image
+        galleryItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                currentImageIndex = index;
+                updateLightbox();
+                lightbox.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            });
+        });
+        
+        // Close lightbox
+        closeBtn.addEventListener('click', () => {
+            lightbox.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Close when clicking outside image
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Navigation
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+            updateLightbox();
+        });
+        
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            updateLightbox();
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (lightbox.style.display === 'flex') {
+                if (e.key === 'Escape') {
+                    lightbox.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                } else if (e.key === 'ArrowLeft') {
+                    currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+                    updateLightbox();
+                } else if (e.key === 'ArrowRight') {
+                    currentImageIndex = (currentImageIndex + 1) % images.length;
+                    updateLightbox();
+                }
+            }
+        });
+        
+        function updateLightbox() {
+            const activeItems = Array.from(document.querySelectorAll('.gallery-item[style="display: block;"]'));
+            const activeImages = activeItems.map(item => item.querySelector('img'));
+            const activeCaptions = activeItems.map(item => item.querySelector('.gallery-caption'));
+            
+            // Find the index within the currently filtered items
+            const filteredIndex = activeImages.findIndex(img => img === images[currentImageIndex]);
+            
+            // If current image isn't in filtered view, start from first filtered image
+            if (filteredIndex === -1 && activeImages.length > 0) {
+                currentImageIndex = images.indexOf(activeImages[0]);
+            }
+            
+            lightboxImg.src = images[currentImageIndex].src;
+            lightboxImg.alt = images[currentImageIndex].alt;
+            lightboxCaption.innerHTML = `
+                <h3>${captions[currentImageIndex].querySelector('h3').textContent}</h3>
+                <p>${captions[currentImageIndex].querySelector('p').textContent}</p>
+            `;
+        }
+
+        // Initialize lightbox for filtered items
+        function initLightboxNavigation() {
+            const activeItems = Array.from(document.querySelectorAll('.gallery-item[style="display: block;"]'));
+            const activeImages = activeItems.map(item => item.querySelector('img'));
+            return { activeItems, activeImages };
+        }
+    </script>
+</body>
+</html>
